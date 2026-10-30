@@ -488,6 +488,89 @@
     .chart-tooltip .up   { color: #2a7d4f; }
     .chart-tooltip .down { color: #c0392b; }
 
+       /* ---- DEBATE: MINEDUC VS. EXPERTO ---- */
+    .debate {
+      background: var(--black);
+      color: var(--white);
+      margin: 2.5rem 0 3rem;
+      padding: 2.25rem clamp(1.25rem, 4vw, 2.5rem) 2.5rem;
+    }
+    .reportaje-body .debate p { margin: 0; color: inherit; }
+    .debate-people {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+    .reportaje-body .debate-who {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--white);
+    }
+    .reportaje-body .debate .debate-role {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      line-height: 1.5;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--greige);
+      margin-top: 0.35rem;
+    }
+    .debate-person.is-expert .debate-who { color: var(--red); }
+    .debate-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1.5rem 0 1.75rem;
+    }
+    .debate-tab {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--greige);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 0.55rem 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .debate-tab:hover { color: var(--white); border-color: var(--white); }
+    .debate-tab.active { background: var(--red); border-color: var(--red); color: var(--white); }
+    .debate-tab:focus-visible { outline: 2px solid var(--white); outline-offset: 2px; }
+    .debate-panel { display: none; }
+    .debate-panel.active {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem 2.5rem;
+      animation: fadeSlideDebate 0.3s var(--ease-out);
+    }
+    @keyframes fadeSlideDebate {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: none; }
+    }
+    .debate-col { border-top: 3px solid rgba(255,255,255,0.5); padding-top: 1rem; }
+    .debate-col.is-expert { border-top-color: var(--red); }
+    .reportaje-body .debate .debate-quote {
+      font-family: var(--font-display);
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 0.9rem;
+    }
+    .reportaje-body .debate-text {
+      font-size: 0.92rem;
+      line-height: 1.65;
+      color: rgba(255,255,255,0.75);
+    }
+    @media (max-width: 640px) {
+      .debate-people, .debate-panel.active { grid-template-columns: 1fr; }
+    }
     /* ---- RESPONSIVE ---- */
     @media (max-width: 900px) {
       .stat-cards { grid-template-columns: 1fr; }
@@ -780,12 +863,80 @@
       <ul>
         <li>Ningún gobierno ha priorizado la educación de jóvenes y adultos desde los años 2000.</li>
         <li>La discusión pública se centra en educación superior y educación municipal diurna.</li>
-        <li>La Subsecretaría no respondió solicitudes de entrevista para este reportaje.</li>
       </ul>
+    </div>
+  </div>
+  
+  <hr class="section-divider" />
+
+  <!-- LA RESPUESTA DEL MINISTERIO -->
+  <h2>Lo que responde el Ministerio</h2>
+
+  <p>
+    Verónica Vergara Escalona está a cargo de la modalidad regular de Educación para Personas Jóvenes y Adultas del Ministerio de Educación. Desde ahí atiende a todos los establecimientos del país que la imparten. Su diagnóstico no esquiva el problema de fondo: "Tenemos todavía un problema estructural que tiene que ver con el financiamiento. Necesitamos más apoyo en eso".
+  </p>
+  <p>
+    Según Vergara, la matrícula "se ha mantenido" en los últimos años, aunque se desgrana durante el año: muchos se inscriben y dejan de asistir en el primer semestre por el trabajo, los turnos o el cuidado de los hijos. La afirmación contrasta con las cifras oficiales, que en 2024 marcaron el nivel más bajo en nueve años. Y como el financiamiento depende de la asistencia, cada ausencia le cuesta a la escuela. "Allí hay un tema ético súper profundo", reconoce: escuelas que acompañan a sus estudiantes aun sabiendo que perderán recursos.
+  </p>
+  <p>
+    Para Patricio Rodríguez, investigador del Centro de Investigación Avanzada en Educación de la Universidad de Chile e integrante del Observatorio de Trayectorias Educativas, el problema es que nadie mira más allá de cuatro años. Estas son sus respuestas, frente a frente.
+  </p>
+
+  <div class="debate reveal" id="debate">
+    <div class="debate-people">
+      <div class="debate-person">
+        <p class="debate-who">Verónica Vergara Escalona</p>
+        <p class="debate-role">Encargada de la modalidad regular EPJA · Mineduc</p>
+      </div>
+      <div class="debate-person is-expert">
+        <p class="debate-who">Patricio Rodríguez</p>
+        <p class="debate-role">Investigador · CIAE, Universidad de Chile</p>
+      </div>
+    </div>
+
+    <div class="debate-tabs" role="tablist" aria-label="Temas del debate">
+      <button class="debate-tab active" role="tab" aria-selected="true" data-panel="deb-patito">¿El patito feo?</button>
+      <button class="debate-tab" role="tab" aria-selected="false" data-panel="deb-plata">El financiamiento</button>
+      <button class="debate-tab" role="tab" aria-selected="false" data-panel="deb-falta">Lo que falta</button>
+    </div>
+
+    <div class="debate-panel active" id="deb-patito" role="tabpanel">
+      <div class="debate-col">
+        <p class="debate-quote">"Más que errónea, yo creo que ha ido cambiando."</p>
+        <p class="debate-text">Vergara reconoce que "existe ese sentimiento", pero asegura que se ha ido desinstalando: hoy avanzan en una evaluación docente propia para la modalidad y en diplomados con universidades de todo el país para especializar a los profesores.</p>
+      </div>
+      <div class="debate-col is-expert">
+        <p class="debate-quote">"Es como el hermano chico de la educación."</p>
+        <p class="debate-text">Rodríguez ordena la jerarquía: primero la educación científico-humanista, después la técnico-profesional y al final la rural y la de jóvenes y adultos. La razón, dice, es simple: no tiene un financiamiento igual al de la educación regular.</p>
+      </div>
+    </div>
+
+    <div class="debate-panel" id="deb-plata" role="tabpanel">
+      <div class="debate-col">
+        <p class="debate-quote">"Esos son recursos que pone el ministerio, que pone el Estado."</p>
+        <p class="debate-text">Vergara admite que la EPJA no accede a otros fondos porque estos exigen, por ejemplo, rendir el Simce. Como respuesta, el ministerio financia un sistema de alerta temprana exclusivo de la modalidad, con recursos para materiales o incluso gas para calefaccionar las salas, además de equipamiento deportivo y salidas culturales.</p>
+      </div>
+      <div class="debate-col is-expert">
+        <p class="debate-quote">"Aprobado, qué bueno. No tiene ningún peso."</p>
+        <p class="debate-text">Rodríguez apunta a la modalidad de reingreso que se discute en el Congreso: una subvención especial para que los jóvenes vuelvan a estudiar. Su temor es que se apruebe sin presupuesto y quede como algo "súper declarativo", con el costo cargado a cada escuela.</p>
+      </div>
+    </div>
+
+    <div class="debate-panel" id="deb-falta" role="tabpanel">
+      <div class="debate-col">
+        <p class="debate-quote">"Nuestro principal desafío es llegar a todos y a todas."</p>
+        <p class="debate-text">Cerca de 4,5 millones de personas en Chile no han terminado la educación básica o media, una cifra que, según Vergara, "ha sido súper difícil de bajar". No hay establecimientos EPJA en todas las comunas ni en muchas zonas rurales, y ampliarlos exige cambios de ley.</p>
+      </div>
+      <div class="debate-col is-expert">
+        <p class="debate-quote">"Nos hace mucha falta una política de educación de largo plazo."</p>
+        <p class="debate-text">Rodríguez compara: así como la defensa tiene planes que superan los gobiernos, la educación vive en ciclos de cuatro años. Con menos niños por la baja natalidad, advierte, que un joven no termine el colegio "es un lujo que no nos podemos dar".</p>
+      </div>
     </div>
   </div>
 
   <hr class="section-divider" />
+  
+  
 
   <!-- TIMELINE -->
   <h2>Una deuda que viene de lejos</h2>
@@ -853,7 +1004,7 @@
   </p>
 
   <p style="font-size:0.8rem;color:var(--greige);margin-top:3rem;font-family:var(--font-mono);letter-spacing:0.04em;">
-    Hasta el cierre de este reportaje, la Subsecretaría de Educación y miembros de la Comisión de Educación no respondieron nuestras solicitudes de entrevista.
+    Hasta el cierre de este reportaje, los miembros de la Comisión de Educación del Congreso no respondieron nuestras solicitudes de entrevista.
   </p>
 
 </main>
@@ -866,7 +1017,7 @@
       <p class="footer-copy">© 2026 Cero Aporte Mag · Escuela de Periodismo, UA · Todos los derechos reservados</p>
     </div>
     <nav class="footer-nav">
-      <a href="reportaje-epja.html">EPJA</a>
+      <a href="reportaje-epja.html">Reportaje</a>
       <a href="testimonios.html">Testimonios</a>
       <a href="datos.html">Datos</a>
       <a href="podcast.html">Opinión</a>
@@ -1050,6 +1201,23 @@
   window.addEventListener('resize', () => { tooltip.style.display = 'none'; draw(); });
   if (document.fonts) document.fonts.ready.then(draw);
 })();
+</script>
+     <script>
+  /* ---- DEBATE MINEDUC VS. EXPERTO ---- */
+  (function () {
+    const debate = document.getElementById('debate');
+    if (!debate) return;
+    const tabs = debate.querySelectorAll('.debate-tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+        debate.querySelectorAll('.debate-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        document.getElementById(tab.dataset.panel).classList.add('active');
+      });
+    });
+  })();
 </script>
 </body>
 </html>
