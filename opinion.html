@@ -392,7 +392,7 @@
   <div class="player-card reveal">
     <p class="player-ep">Episodio 1 — Trailer</p>
     <p class="player-title">Nunca es tarde para el pupitre</p>
-    <p class="player-subtitle">Educación de Adultos: El Desafío · 4 min 32 seg</p>
+    <p class="player-subtitle">Educación de Adultos: El Desafío ·  8 min 37 seg</p>
 
     <div class="player-controls">
       <button class="player-btn" onclick="seekPct(-10)" title="Retroceder 10s">
@@ -404,7 +404,7 @@
       <button class="player-btn" onclick="seekPct(10)" title="Avanzar 10s">
         <svg viewBox="0 0 24 24"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/></svg>
       </button>
-      <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--greige);margin-left:0.5rem;" id="playerLabel">Trailer · 4:32</span>
+      <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--greige);margin-left:0.5rem;" id="playerLabel">Episodio 1 · 8:37</span>
     </div>
 
     <div class="player-progress-wrap">
@@ -412,9 +412,11 @@
       <div class="player-bar" id="playerBar" onclick="seekClick(event)">
         <div class="player-bar-fill" id="playerFill"></div>
       </div>
-      <span class="player-time" id="totalTime">4:32</span>
+      <span class="player-time" id="totalTime">8:37</span>
     </div>
+        <audio id="audioOpinion" src="opinion-episodio-1.mp3" preload="metadata"></audio>
   </div>
+  
 
   <p class="reveal">En este primer episodio, debatimos con expertos académicos y autoridades locales sobre el futuro de la nivelación de estudios en Chile. Mientras escuchas, te invitamos a explorar nuestro glosario interactivo para entender mejor la terminología del sistema.</p>
 
@@ -496,78 +498,38 @@
 
 <script src="main.js"></script>
 <script>
-/* ---- PLAYER SIMULADO ---- */
-const episodes = [
-  { title: 'Nunca es tarde — Trailer', dur: 272 },
-  { title: 'El patito feo de la educación', dur: 1125 },
-  { title: 'Volver a los cuadernos a los 47', dur: 1330 },
-  { title: 'El recorte que nadie vio', dur: 955 },
-];
-let currentEp = 0;
-let currentSec = 0;
-let isPlaying = false;
-let interval = null;
+/* ---- PLAYER CON AUDIO REAL ---- */
+const audio = document.getElementById('audioOpinion');
+const playIcon = document.getElementById('playIcon');
+const ICON_PLAY = '<path d="M8 5v14l11-7z"/>';
+const ICON_PAUSE = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
 
 function fmtTime(s) {
+  if (!isFinite(s)) return '0:00';
   const m = Math.floor(s / 60);
   const ss = String(Math.floor(s % 60)).padStart(2, '0');
   return `${m}:${ss}`;
 }
-
 function updatePlayer() {
-  const ep = episodes[currentEp];
-  document.getElementById('currentTime').textContent = fmtTime(currentSec);
-  document.getElementById('totalTime').textContent = fmtTime(ep.dur);
-  document.getElementById('playerFill').style.width = ((currentSec / ep.dur) * 100) + '%';
+  const dur = audio.duration || 0;
+  document.getElementById('currentTime').textContent = fmtTime(audio.currentTime);
+  document.getElementById('totalTime').textContent = fmtTime(dur);
+  document.getElementById('playerFill').style.width = dur ? (audio.currentTime / dur * 100) + '%' : '0%';
 }
-
-function togglePlay() {
-  isPlaying = !isPlaying;
-  const icon = document.getElementById('playIcon');
-  if (isPlaying) {
-    icon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-    interval = setInterval(() => {
-      currentSec++;
-      if (currentSec >= episodes[currentEp].dur) {
-        currentSec = 0;
-        isPlaying = false;
-        icon.innerHTML = '<path d="M8 5v14l11-7z"/>';
-        clearInterval(interval);
-      }
-      updatePlayer();
-    }, 1000);
-  } else {
-    icon.innerHTML = '<path d="M8 5v14l11-7z"/>';
-    clearInterval(interval);
-  }
-}
-
-function seekPct(secs) {
-  currentSec = Math.max(0, Math.min(currentSec + secs, episodes[currentEp].dur));
-  updatePlayer();
-}
-
+function togglePlay() { audio.paused ? audio.play() : audio.pause(); }
+function seekPct(secs) { audio.currentTime = Math.max(0, Math.min(audio.currentTime + secs, audio.duration || 0)); }
 function seekClick(e) {
-  const bar = document.getElementById('playerBar');
-  const rect = bar.getBoundingClientRect();
-  const pct = (e.clientX - rect.left) / rect.width;
-  currentSec = Math.round(pct * episodes[currentEp].dur);
-  updatePlayer();
+  const rect = document.getElementById('playerBar').getBoundingClientRect();
+  if (audio.duration) audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
 }
+function loadEp() { document.querySelector('.player-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); }
 
-function loadEp(idx) {
-  clearInterval(interval);
-  isPlaying = false;
-  currentEp = idx;
-  currentSec = 0;
-  document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
-  document.getElementById('playerLabel').textContent = `Ep. ${idx + 1} · ${fmtTime(episodes[idx].dur)}`;
-  updatePlayer();
-  document.querySelector('.player-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
+audio.addEventListener('play',  () => { playIcon.innerHTML = ICON_PAUSE; });
+audio.addEventListener('pause', () => { playIcon.innerHTML = ICON_PLAY; });
+audio.addEventListener('ended', () => { playIcon.innerHTML = ICON_PLAY; audio.currentTime = 0; });
+audio.addEventListener('timeupdate', updatePlayer);
+audio.addEventListener('loadedmetadata', updatePlayer);
 updatePlayer();
-
 /* ---- GLOSARIO ---- */
 function activarTermino(id) {
   document.querySelectorAll('.glosario-panel').forEach(p => p.classList.remove('active'));
