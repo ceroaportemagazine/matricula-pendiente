@@ -110,6 +110,7 @@
     <b id="txtPuntos">0</b>
   </div>
   <button class="btn-pausa" id="btnPausa" aria-label="Pausar">⏸</button>
+    <button class="btn-pausa" id="btnSonido" aria-label="Silenciar sonido">🔊</button>
 </div>
 
 <div id="aviso" role="status" aria-live="polite"></div>
@@ -244,6 +245,43 @@ const CONFIG = {
 
 (function(){
   'use strict';
+  
+  // ---------- Sonidos ----------
+  const SONIDOS = {
+    salto:  { src: 'sonidos/salto.mp3',  vol: 0.5 },
+    carril: { src: 'sonidos/carril.mp3', vol: 0.3 },
+    choque: { src: 'sonidos/choque.mp3', vol: 0.8 },
+    apoyo1: { src: 'sonidos/apoyo1.mp3', vol: 0.6 },
+    apoyo2: { src: 'sonidos/apoyo2.mp3', vol: 0.6 },
+    apoyo3: { src: 'sonidos/apoyo3.mp3', vol: 0.6 },
+    jugar:  { src: 'sonidos/jugar.mp3',  vol: 0.6 },
+    seguir: { src: 'sonidos/seguir.mp3', vol: 0.5 },
+    ganar:  { src: 'sonidos/ganar.mp3',  vol: 0.7 },
+    perder: { src: 'sonidos/perder.mp3', vol: 0.7 }
+  };
+  const audios = {};
+  Object.keys(SONIDOS).forEach(k => { const a = new Audio(SONIDOS[k].src); a.preload = 'auto'; audios[k] = a; });
+  let mudo = false;
+  try { mudo = localStorage.getItem('dosporuno-mudo') === '1'; } catch (e) {}
+  function sonar(nombre) {
+    if (mudo || !audios[nombre]) return;
+    const a = audios[nombre].cloneNode();
+    a.volume = SONIDOS[nombre].vol;
+    a.play().catch(() => {});
+  }
+  function sonarApoyo() { sonar('apoyo' + (1 + Math.floor(Math.random() * 3))); }
+  const btnSonido = document.getElementById('btnSonido');
+  function pintarSonido() {
+    btnSonido.textContent = mudo ? '🔇' : '🔊';
+    btnSonido.setAttribute('aria-label', mudo ? 'Activar sonido' : 'Silenciar sonido');
+  }
+  btnSonido.addEventListener('click', () => {
+    mudo = !mudo;
+    try { localStorage.setItem('dosporuno-mudo', mudo ? '1' : '0'); } catch (e) {}
+    pintarSonido();
+    btnSonido.blur();
+  });
+  pintarSonido();
   const C = CONFIG.colores;
   const CARRILES = [-2.2, 0, 2.2];
   const Z_APARICION = -100;
@@ -614,14 +652,17 @@ const CONFIG = {
   }
 
   // ---------- Controles ----------
-  function mover(dir) {
+   function mover(dir) {
     if (estado !== 'jugando') return;
+    const antes = carril;
     carril = Math.max(0, Math.min(2, carril + dir));
     xObjetivo = CARRILES[carril];
+    if (carril !== antes) sonar('carril');
   }
   function saltar() {
     if (estado !== 'jugando' || !enSuelo) return;
     vy = 9.5; enSuelo = false;
+    sonar('salto');
   }
   window.addEventListener('keydown', e => {
     const k = e.key;
@@ -664,6 +705,7 @@ const CONFIG = {
     if (nombre) pantallas[nombre].classList.add('activa');
   }
   function empezar() {
+        sonar('jugar');
     reiniciar();
     estado = 'jugando';
     mostrarPantalla(null);
@@ -676,10 +718,10 @@ const CONFIG = {
     estado = 'pausa'; mostrarPantalla('pausa');
     document.getElementById('btnSeguir').focus();
   }
-  function seguir() { estado = 'jugando'; mostrarPantalla(null); }
-
+    function seguir() { estado = 'jugando'; mostrarPantalla(null); sonar('seguir'); }
   function terminar(gano) {
     estado = 'fin';
+        sonar(gano ? 'ganar' : 'perder');
     tactil.classList.remove('visible');
     const metros = Math.floor(Math.min(distancia, CONFIG.metaMetros));
     if (gano) puntos += 500;
@@ -800,6 +842,7 @@ const CONFIG = {
           invulnerable = 1.3; temblor = 0.35;
           explosion(o.malla.position.x, 0.8, z, it.color);
           o.malla.rotation.x = -0.5; o.malla.position.y = -0.3;
+                    sonar('choque');
           mostrarAviso('obs', '−' + CONFIG.danoPorObstaculo + ' · ' + it.emoji + ' ' + it.nombre, it.mensaje);
           if (energia <= 0) { energia = 0; actualizarHUD(); terminar(false); }
         } else if (o.tipo === 'apo' && Math.abs(z) < 0.95) {
@@ -810,6 +853,7 @@ const CONFIG = {
           recogidos[o.idx] = (recogidos[o.idx] || 0) + 1;
           explosion(o.malla.position.x, 1.1, z, it.color);
           escena.remove(o.malla); objetos.splice(i, 1);
+                    sonarApoyo();
           mostrarAviso('apo', '+' + CONFIG.recuperaPorApoyo + ' · ' + it.emoji + ' ' + it.nombre, it.mensaje);
           continue;
         }
