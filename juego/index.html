@@ -279,9 +279,14 @@ const CONFIG = {
     mudo = !mudo;
     try { localStorage.setItem('dosporuno-mudo', mudo ? '1' : '0'); } catch (e) {}
     pintarSonido();
+        if (mudo) musica.pause(); else if (estado === 'jugando') musica.play().catch(() => {});
     btnSonido.blur();
   });
   pintarSonido();
+    const musica = new Audio('sonidos/musica.mp3');
+  musica.loop = true;
+  musica.volume = 0.45;
+  musica.preload = 'auto';
   const C = CONFIG.colores;
   const CARRILES = [-2.2, 0, 2.2];
   const Z_APARICION = -100;
@@ -706,6 +711,8 @@ const CONFIG = {
   }
   function empezar() {
         sonar('jugar');
+        musica.currentTime = 0;
+    if (!mudo) musica.play().catch(() => {});
     reiniciar();
     estado = 'jugando';
     mostrarPantalla(null);
@@ -716,12 +723,14 @@ const CONFIG = {
   function pausar() {
     if (estado !== 'jugando') return;
     estado = 'pausa'; mostrarPantalla('pausa');
+        musica.pause();
     document.getElementById('btnSeguir').focus();
   }
-    function seguir() { estado = 'jugando'; mostrarPantalla(null); sonar('seguir'); }
+    function seguir() { estado = 'jugando'; mostrarPantalla(null); sonar('seguir'); if (!mudo) musica.play().catch(() => {}); }
   function terminar(gano) {
     estado = 'fin';
         sonar(gano ? 'ganar' : 'perder');
+        musica.pause();
     tactil.classList.remove('visible');
     const metros = Math.floor(Math.min(distancia, CONFIG.metaMetros));
     if (gano) puntos += 500;
