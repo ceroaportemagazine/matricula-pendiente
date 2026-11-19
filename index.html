@@ -80,6 +80,41 @@
     }
     .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
 
+       /* ----  ESTILO REVISTA ---- */
+    .hero-inner. { text-align: center; display: flex; flex-direction: column; align-items: center; }
+    . .hero-edition { justify-content: center; }
+    . .hero-edition::after { content: ''; display: inline-block; width: 2rem; height: 1px; background: var(--red); }
+    .-main {
+      display: block;
+      font-family: 'Questrial', sans-serif;
+      font-weight: 400;
+      color: var(--white);
+      font-size: clamp(3rem, 9.5vw, 8.5rem);
+      letter-spacing: 0.1em;
+      margin-right: -0.1em;
+      line-height: 1;
+    }
+    .-sub {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      color: var(--red);
+      text-transform: uppercase;
+      font-size: clamp(1.1rem, 3.2vw, 2.9rem);
+      letter-spacing: 0.16em;
+      margin-right: -0.16em;
+      line-height: 1;
+      margin-top: 0.6rem;
+    }
+    .portada-by {
+      font-family: 'Questrial', sans-serif;
+      color: rgba(255,255,255,0.8);
+      font-size: clamp(0.75rem, 1.2vw, 1rem);
+      letter-spacing: 0.45em;
+      margin: 1rem -0.45em 2.25rem 0;
+    }
+    .portada .hero-deck { margin-left: auto; margin-right: auto; font-style: normal; }
+    .portada .hero-actions { justify-content: center; }
     /* ---- BAJADA LIVE TICKER ---- */
     .ticker-bar {
       background: var(--red);
@@ -305,9 +340,10 @@
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-noise"></div>
-  <div class="hero-inner">
+   <div class="hero-inner portada">
     <p class="hero-edition">Edición 2026</p>
-    <h1 class="hero-headline">DOSPORUNO<em> matrícula Pendiente </h1>
+      <h1><span class="portada-main">DOSPORUNO</span><span class="portada-sub">Matrícula Pendiente</span></h1>
+    <p class="portada-by">Cero Aporte Magazine</p>
     <p class="hero-deck">
       Adultos que volvieron a las salas de clases enfrentan un sistema roto: sin psicólogos, sin transporte, sin textos y con presupuestos que se desploman año a año. Una investigación sobre la educación de jóvenes y adultos en Chile.
     </p>
